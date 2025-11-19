@@ -10,6 +10,7 @@ int value = 0;
 float time_val  = 0;
 float distance = 0;
 float temperature = 0;
+float humidity = 0;
 
 void setup() {
   Serial.begin(9600);
@@ -48,6 +49,17 @@ void read_temperature(){
   }
 }
 
+void read_humidity(){
+  humidity = dht.readHumidity();
+  if (isnan(humidity)) {
+    Serial.println("Failed to read from DHT sensor!");
+  }
+  else{
+    Serial.print("Humidity: ");
+    Serial.println(humidity);
+  }
+}
+
 void logic_distance(){
   if (distance < 10) {
     analogWrite(A1, 255);
@@ -61,6 +73,7 @@ void logic_distance(){
 void loop() {
   read_distance();
   read_temperature();
+  read_humidity();
   logic_distance();
-  delay(1000);
+  delay(50);
 }
