@@ -1,33 +1,37 @@
 #include <Arduino.h>
+
 int value = 0;
-int pressure = 0;
+float time_val  = 0;
+float distance = 0;
+
 void setup() {
+  Serial.begin(9600);
   pinMode(A1, OUTPUT);
   pinMode(A2, OUTPUT);
   pinMode(A3, OUTPUT);
   pinMode(A6, INPUT);
+
+  pinMode(D3, OUTPUT);
+  pinMode(A0, INPUT);
+  digitalWrite(D3,LOW);
 }
 
 void loop() {
-  if(value % 3 == 0){
+  digitalWrite(D3,HIGH);
+  delayMicroseconds(10);
+  digitalWrite(D3,LOW);
+
+  time_val = pulseIn(A0, HIGH);
+  distance = (time_val * .0343)/2;
+  Serial.print("Distance: ");
+  if (distance < 10){
     analogWrite(A1, 255);
     analogWrite(A2, 0);
-    analogWrite(A3, 0);
-    value++;
   }
-  else if(value % 3 == 1){
+  else{
     analogWrite(A1, 0);
     analogWrite(A2, 255);
-    analogWrite(A3, 0);
-    value++;
   }
-  else if(value % 3 == 2){
-    analogWrite(A1, 0);
-    analogWrite(A2, 0);
-    analogWrite(A3, 255);
-    value = 0;
-  }
-  pressure = analogRead(A6);
-  Serial.println(pressure);  
-  delay(1000);
+  Serial.println(distance);
+  delay(100);
 }
