@@ -7,14 +7,23 @@
 #define DHTPIN A7
 #define DHTTYPE DHT11
 
+#define NOTE_B4  494
+#define NOTE_C5  523
+#define NOTE_D5  587
+#define NOTE_E5  659
+#define NOTE_F5  698
+#define NOTE_G5  784
+#define NOTE_A5  880
+#define NOTE_B5  988
+
 const char* ssid = "iPhone de Davide";
 const char* pass = "jatedisse";
 const char* brokerUser = "teensy";
 const char* brokerPass = "";
 const char* broker = "172.20.10.4";
-const char* distanceTopic = "/sonar/distance";
-const char* temperatureTopic = "/dht11/temperature";
-const char* humidityTopic = "/dht11/humidity";
+const char* distanceTopic = "sensors/distance";
+const char* temperatureTopic = "sensors/temperature";
+const char* humidityTopic = "sensors/humidity";
 
 WiFiClient espClient;
 PubSubClient  client(espClient);
@@ -70,6 +79,8 @@ void setup() {
   pinMode(D3, OUTPUT);
   pinMode(A0, INPUT);
   digitalWrite(D3, LOW);
+
+  pinMode(A5, OUTPUT);
 
   dht.begin(); // Initialize DHT11
 }
@@ -137,8 +148,15 @@ void loop() {
 
     snprintf(messages, 75, "%f", humidity);
     client.publish(humidityTopic, messages);
-
     lastTime = millis();
   }
-  delay(50);
+  /*
+  analogWrite(A5, 0);
+  delay(2000);
+  analogWrite(A5, 75);
+  delay(2000);
+  analogWrite(A5, 150);
+  delay(2000);
+  */
+  //delay(50);
 }
