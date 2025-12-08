@@ -1,33 +1,26 @@
 #include <Arduino.h>
+
 int value = 0;
-int pressure = 0;
+int height = 0;
+int distance = 0;
+
 void setup() {
   pinMode(A1, OUTPUT);
   pinMode(A2, OUTPUT);
   pinMode(A3, OUTPUT);
   pinMode(A6, INPUT);
+  pinMode(D3, OUTPUT);
+  pinMode(A0, INPUT);
 }
 
 void loop() {
-  if(value % 3 == 0){
-    analogWrite(A1, 255);
-    analogWrite(A2, 0);
-    analogWrite(A3, 0);
-    value++;
-  }
-  else if(value % 3 == 1){
-    analogWrite(A1, 0);
-    analogWrite(A2, 255);
-    analogWrite(A3, 0);
-    value++;
-  }
-  else if(value % 3 == 2){
-    analogWrite(A1, 0);
-    analogWrite(A2, 0);
-    analogWrite(A3, 255);
-    value = 0;
-  }
-  pressure = analogRead(A6);
-  Serial.println(pressure);  
-  delay(1000);
+  digitalWrite(D3,HIGH);
+  delay(10);
+  digitalWrite(D3,LOW);
+
+  height = analogRead(A0);
+  distance = (height*.0343)/2;
+  Serial.print("Distance: ");
+  Serial.println(distance);
+  delay(100);
 }
