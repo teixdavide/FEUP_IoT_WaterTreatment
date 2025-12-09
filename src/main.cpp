@@ -37,6 +37,7 @@ float distance = 0;
 float temperature = 0;
 float humidity = 0;
 int buzzers = 1;
+int last_press = 0;
 
 void setupWiFi(){
   delay(100);
@@ -156,11 +157,8 @@ void logic_distance(){
 }
 
 void loop() {
-  if(buzzers == 0 & digitalRead(A4)){
-    buzzers = 1;
-  }
-  else if(digitalRead(A4)){
-    buzzers = 0;
+  if (last_press == HIGH && digitalRead(A4) == LOW) {
+    buzzers = !buzzers;                 // toggle            // basic debounce
   }
   read_distance();
   read_temperature();
