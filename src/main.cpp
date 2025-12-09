@@ -177,10 +177,6 @@ void loop() {
     client.publish(humidityTopic, messages);
     lastTime = millis();
   }
-
-
-
-
   /*
   analogWrite(A5, 0);
   delay(2000);
