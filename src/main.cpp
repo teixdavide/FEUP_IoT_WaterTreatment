@@ -158,10 +158,10 @@ void logic_distance(){
 void loop() {
   if(buzzers == 0 & digitalRead(A4)){
     buzzers = 1;
-  };
+  }
   else if(digitalRead(A4)){
     buzzers = 0;
-  };
+  }
   read_distance();
   read_temperature();
   read_humidity();
