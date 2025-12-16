@@ -20,9 +20,9 @@ const char* pass = "jatedisse";
 const char* brokerUser = "teensy";
 const char* brokerPass = "";
 const char* broker = "172.20.10.4";
-const char* distanceTopic = "sensors/distance";
-const char* temperatureTopic = "sensors/temperature";
-const char* humidityTopic = "sensors/humidity";
+const char* distanceTopic = "sensors/process_5/distance";
+const char* temperatureTopic = "sensors/process_5/temperature";
+const char* humidityTopic = "sensors/process_5/humidity";
 
 WiFiClient espClient;
 PubSubClient  client(espClient);
@@ -45,7 +45,6 @@ void setupWiFi(){
   Serial.println(ssid);
 
   WiFi.begin(ssid, pass);
-
   while (WiFi.status() != WL_CONNECTED){
     delay(100);
     Serial.print("-");
@@ -141,12 +140,13 @@ void read_humidity(){
 }
 
 void logic_distance(){
+
   if(buzzers==0){
     analogWrite(A1,0);
     analogWrite(A2,0);
   }
   else{
-    if (distance < 10) {
+    if (distance > 5.5) {
     analogWrite(A1, 255);
     analogWrite(A2, 0);
   } else {
@@ -169,7 +169,7 @@ void loop() {
   }
   client.loop();
   currentTime = millis();
-  if (currentTime - lastTime > 2000){
+  if (currentTime - lastTime > 500){
     snprintf(messages, 75, "%f", distance);
     client.publish(distanceTopic, messages);
 
