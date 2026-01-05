@@ -113,7 +113,8 @@ void read_distance(){
   digitalWrite(SONAR_DIGITAL, LOW);
 
   time_val = pulseIn(SONAR, HIGH);
-  distance = (time_val * LIGHT_SPEED) / 2;
+  if (time_val * LIGHT_SPEED / 2 >= 4.5)
+    distance = (time_val * LIGHT_SPEED) / 2;
 
   Serial.print("Distance: ");
   Serial.println(distance);
@@ -143,18 +144,12 @@ void read_humidity(){
 
 void logic_distance(){
 
-  if(buzzers==0){
-    analogWrite(RED,0);
-    analogWrite(GREEN,0);
-  }
-  else{
-    if (distance > 5.5) {
+  if (distance > 7.5) {
     analogWrite(RED, 255);
     analogWrite(GREEN, 0);
   } else {
     analogWrite(RED, 0);
     analogWrite(GREEN, 255);
-  }
   }
 }
 
