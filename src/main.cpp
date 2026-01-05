@@ -6,14 +6,7 @@
 #define DHTPIN A7
 #define DHTTYPE DHT11
 
-#define NOTE_B4  494
-#define NOTE_C5  523
-#define NOTE_D5  587
-#define NOTE_E5  659
-#define NOTE_F5  698
-#define NOTE_G5  784
-#define NOTE_A5  880
-#define NOTE_B5  988
+#define SUB_TOPIC "something"
 
 const char* ssid = "iPhone de Davide";
 const char* pass = "jatedisse";
@@ -103,7 +96,7 @@ void setup() {
 
   dht.begin(); // Initialize DHT11
 
-  client.subscribe("something");
+  client.subscribe(SUB_TOPIC);
 }
 
 void read_distance(){
@@ -156,13 +149,29 @@ void logic_distance(){
   }
 }
 
-void loop() {
-  if (last_press == HIGH && digitalRead(A4) == LOW) {
-    buzzers = !buzzers;                 // toggle            // basic debounce
+void update_buzzer(){
+
+  if(last_press == LOW && digitalRead(A4) == LOW);
+  else if(last_press == LOW && digitalRead(A4) == HIGH){
+    last_press = HIGH;
   }
-  read_distance();
+  else if (last_press == HIGH && digitalRead(A4) == LOW) {
+    buzzers = !buzzers;
+    last_press = LOW;
+  }
+  else;
+
+}
+
+void read_values(){
   read_temperature();
   read_humidity();
+  read_distance();
+}
+
+void loop() {
+  update_buzzer();
+  read_values();
   logic_distance();
   if (!client.connected()){
     reconnect();
