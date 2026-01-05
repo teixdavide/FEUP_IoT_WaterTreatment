@@ -5,8 +5,16 @@
 
 #define DHTPIN A7
 #define DHTTYPE DHT11
+#define RED A1
+#define GREEN A2
+#define BLUE A3
+#define BUZZER A4
+#define BUZZER_2 A5
+#define SONAR A0
+#define SONAR_DIGITAL D3
+#define LIGHT_SPEED 0.0343
 
-#define SUB_TOPIC "something"
+#define SUB_TOPIC "emergency"
 
 const char* ssid = "iPhone de Davide";
 const char* pass = "jatedisse";
@@ -53,6 +61,7 @@ void reconnect(){
     Serial.println(broker);
     if (client.connect("172.20.10.4", brokerUser, brokerPass)){
         Serial.print("\nConnected");
+        client.subscribe(SUB_TOPIC);
     }else{
       Serial.print("\nConnecting");
       delay(5000);
@@ -69,10 +78,10 @@ void callback(char* topic, byte* payload, unsigned int length) {
   }
   Serial.println();
   if((char)payload[0] == '1' & buzzers == 1){
-    analogWrite(A5, 150);
+    analogWrite(BUZZER_2, 150);
   }
   else{
-    analogWrite(A5, 0);
+    analogWrite(BUZZER_2, 0);
   }
 }
 
@@ -82,29 +91,29 @@ void setup() {
   client.setServer(broker, 1883);
   client.setCallback(callback);
   
-  pinMode(A1, OUTPUT);
-  pinMode(A2, OUTPUT);
-  pinMode(A3, OUTPUT);
-  pinMode(A4, INPUT);
+  pinMode(RED, OUTPUT);
+  pinMode(GREEN, OUTPUT);
+  pinMode(BLUE, OUTPUT);
+  pinMode(BUZZER, INPUT);
 
-  pinMode(D3, OUTPUT);
-  pinMode(A0, INPUT);
-  digitalWrite(D3, LOW);
+  pinMode(SONAR_DIGITAL, OUTPUT);
+  pinMode(SONAR, INPUT);
+  digitalWrite(SONAR_DIGITAL, LOW);
 
-  pinMode(A5, OUTPUT);
+  pinMode(BUZZER_2, OUTPUT);
 
-  dht.begin(); // Initialize DHT11
+  dht.begin();
 
   client.subscribe(SUB_TOPIC);
 }
 
 void read_distance(){
-  digitalWrite(D3, HIGH);
+  digitalWrite(SONAR_DIGITAL, HIGH);
   delayMicroseconds(10);
-  digitalWrite(D3, LOW);
+  digitalWrite(SONAR_DIGITAL, LOW);
 
-  time_val = pulseIn(A0, HIGH);
-  distance = (time_val * 0.0343) / 2;
+  time_val = pulseIn(SONAR, HIGH);
+  distance = (time_val * LIGHT_SPEED) / 2;
 
   Serial.print("Distance: ");
   Serial.println(distance);
@@ -135,27 +144,27 @@ void read_humidity(){
 void logic_distance(){
 
   if(buzzers==0){
-    analogWrite(A1,0);
-    analogWrite(A2,0);
+    analogWrite(RED,0);
+    analogWrite(GREEN,0);
   }
   else{
     if (distance > 5.5) {
-    analogWrite(A1, 255);
-    analogWrite(A2, 0);
+    analogWrite(RED, 255);
+    analogWrite(GREEN, 0);
   } else {
-    analogWrite(A1, 0);
-    analogWrite(A2, 255);
+    analogWrite(RED, 0);
+    analogWrite(GREEN, 255);
   }
   }
 }
 
 void update_buzzer(){
 
-  if(last_press == LOW && digitalRead(A4) == LOW);
-  else if(last_press == LOW && digitalRead(A4) == HIGH){
+  if(last_press == LOW && digitalRead(BUZZER) == LOW);
+  else if(last_press == LOW && digitalRead(BUZZER) == HIGH){
     last_press = HIGH;
   }
-  else if (last_press == HIGH && digitalRead(A4) == LOW) {
+  else if (last_press == HIGH && digitalRead(BUZZER) == LOW) {
     buzzers = !buzzers;
     last_press = LOW;
   }
@@ -189,13 +198,4 @@ void loop() {
     client.publish(humidityTopic, messages);
     lastTime = millis();
   }
-  /*
-  analogWrite(A5, 0);
-  delay(2000);
-  analogWrite(A5, 75);
-  delay(2000);
-  analogWrite(A5, 150);
-  delay(2000);
-  */
-  //delay(50);
 }
